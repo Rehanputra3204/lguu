@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family 100 - Tebak judul lagu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            background: url('https://i.pinimg.com/originals/f5/57/16/f55716aee2bc87ae2711b1ee744fef76.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: red;
+            text-align: center;
+            padding: 80px 20px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #000;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px #000;
+        }
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            width: 250px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #00f2ff;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #00cfff;
+            box-shadow: 0 0 20px #00cfff, 0 0 30px #00cfff;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-shadow: 0 0 5px #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Family 100</h1>
+    <p>Sebutkan 1 dari 5 judul lagu justin bieber!</p>
+    <input type="text" id="jawaban" placeholder="Tulis jawaban di sini">
+    <button onclick="cekJawaban()">Kirim</button>
+    <p id="result"></p>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBO1xSoQ5DGnpy_dX1zIX9GLHkv2Wf0gOI",
+            authDomain: "family100-f1eed.firebaseapp.com",
+            projectId: "family100-f1eed",
+            storageBucket: "family100-f1eed.appspot.com",
+            messagingSenderId: "875213159785",
+            appId: "1:875213159785:web:6f29cc798100993ff591f8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function cekJawaban() {
+            const input = document.getElementById("jawaban").value.trim().toLowerCase();
+            const resultEl = document.getElementById("result");
+
+            if (!input) {
+                resultEl.textContent = "Jawaban tidak boleh kosong.";
+                return;
+            }
+
+            const docRef = db.collection("jawaban").doc(input);
+            const docSnap = await docRef.get();
+
+            if (!docSnap.exists) {
+                resultEl.textContent = "Jawaban salah atau tidak terdaftar.";
+                return;
+            }
+
+            const data = docSnap.data();
+            if (data.count < 5) {
+                await docRef.update({ count: data.count + 1 });
+                resultEl.innerHTML = 'Selamat! Kamu berhasil. <br><a href="https://link.dana.id/danakaget?c=sepjhd4m8&r=gG6E86&orderId=20250416101214788715010300166662418062995" target="_blank" style="color:#00f2ff;text-decoration:underline;">Klaim Hadiah</a>';
+            } else {
+                resultEl.textContent = "Maaf, jawaban ini sudah ditebus oleh 5 orang.";
+            }
+        }
+    </script>
+</body>
+</html>
